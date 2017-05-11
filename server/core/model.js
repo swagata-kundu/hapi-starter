@@ -139,8 +139,8 @@ class Model {
           @param {} options 
          * @returns Promise
          */
-    updateOne(_id, updates, options = {}) {
-        return this.model.findOneAndUpdate({ _id }, updates, Object.assign({ new: true }, options)).exec();
+    updateOne(_id, updates, options = {}, callback) {
+        this.model.findOneAndUpdate({ _id }, updates, Object.assign({ new: true }, options)).exec(callback);
     }
 
     /**

@@ -44,10 +44,10 @@ class User extends Model {
 
     static generatePasswordHash(password, callback) {
         Async.auto({
-            salt: function(done) {
+            salt: (done) => {
                 Bcrypt.genSalt(10, done);
             },
-            hash: ['salt', function(results, done) {
+            hash: ['salt', (results, done) => {
                 Bcrypt.hash(password, results.salt, done);
             }]
         }, (err, results) => {
