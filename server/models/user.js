@@ -23,10 +23,15 @@ const userSchema = new Mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     password: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, index: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    deviceId: { type: String, required: false },
+    deviceId: { type: String, required: false, default: '' },
+    role: {
+        type: String,
+        enum: ['vendor', 'admin'],
+        default: 'vendor'
+    }
 }, options);
 
 
@@ -70,7 +75,7 @@ class User extends Model {
                     isDeleted: false,
                     email: email
                 };
-                self.getOne(query, 'email password', done);
+                self.getOne(query, '', done);
             },
             passwordMatch: ['user', function(results, done) {
 
@@ -85,7 +90,7 @@ class User extends Model {
                 return callback(err);
             }
             if (results.passwordMatch) {
-                return callback(null, results.user.toObject());
+                return callback(null, results.user.toJSON());
             }
             callback();
         });

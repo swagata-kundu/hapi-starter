@@ -34,6 +34,12 @@ const manifest = {
             options: {
                 routes: { prefix: '/api' }
             }
+        },
+        {
+            plugin: './server/api/user',
+            options: {
+                routes: { prefix: '/api/user' }
+            }
         }
     ]
 };
