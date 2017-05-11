@@ -1,0 +1,38 @@
+{
+    "env": {
+        "node": true
+    },
+    "globals": {
+        "Promise": true,
+        "index": true,
+        "console": true
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "callback-return": [
+            "error"
+        ],
+        "no-console": 0
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
+    }
+}
