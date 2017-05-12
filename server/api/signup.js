@@ -2,8 +2,11 @@
 
 const Boom = require('boom');
 const Joi = require('joi');
-const User = require('../models/user');
 const Async = require('async');
+
+
+const User = require('../models/user');
+const Response = require('../core/responseModel');
 
 const internals = {};
 
@@ -71,13 +74,15 @@ internals.applyRoutes = function(server, next) {
                 const user = results.user;
                 const authHeader = 'Basic ' + new Buffer(user.email + ':' + user.password).toString('base64');
 
-                reply({
-                    user: {
-                        _id: user._id,
-                        email: user.email
-                    },
-                    authHeader
-                });
+                reply(
+                    new Response('', {
+                        user: {
+                            _id: user._id,
+                            email: user.email,
+                            role: user.role
+                        },
+                        authHeader
+                    }));
             });
         }
     });

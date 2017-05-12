@@ -16,11 +16,16 @@ class Model {
     }
 
 
-    getSortedAndPaginated(condition, options) {
+    getSortedAndPaginated(condition, projection = {}, options) {
 
         // condition object is required
         if (!_.isPlainObject(condition)) {
             throw new Error('condition must be a plain object.');
+        }
+
+        // projection object is required
+        if (!_.isPlainObject(projection)) {
+            throw new Error('projecton must be a plain object.');
         }
 
         // get skip, limit and sort data
@@ -44,7 +49,7 @@ class Model {
         }
 
         // process query
-        let query = this.model.find(condition).sort(sort).skip(skip).populate(populate);
+        let query = this.model.find(condition, projection).sort(sort).skip(skip).populate(populate);
 
         // check limit is sent or not
         if (limit) {

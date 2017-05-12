@@ -2,10 +2,14 @@
 
 const Boom = require('boom');
 const Joi = require('joi');
-const User = require('../models/user');
 const Async = require('async');
 const Randomstring = require('randomstring');
 const Bcrypt = require('bcrypt');
+
+const User = require('../models/user');
+const Response = require('../core/responseModel');
+
+
 
 const internals = {};
 
@@ -42,13 +46,15 @@ internals.applyRoutes = function(server, next) {
             const user = request.pre.user;
             const authHeader = 'Basic ' + new Buffer(user.email + ':' + request.payload.password).toString('base64');
 
-            reply({
-                user: {
-                    _id: user._id,
-                    email: user.email
-                },
-                authHeader
-            });
+            reply(
+                new Response('', {
+                    user: {
+                        _id: user._id,
+                        email: user.email,
+                        role: user.role
+                    },
+                    authHeader
+                }));
         }
     });
 
