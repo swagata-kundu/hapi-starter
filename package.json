@@ -19,12 +19,14 @@
     "dotenv": "^4.0.0",
     "eslint-config-hapi": "^10.0.0",
     "eslint-plugin-hapi": "^4.0.0",
+    "glue": "^4.1.0",
     "handlebars": "^4.0.8",
     "hapi": "^16.1.0",
     "hapi-auth-basic": "^4.2.0",
     "lodash": "^4.17.4",
     "mongoose": "^4.9.8",
     "nodemailer": "^4.0.1",
-    "nodemailer-markdown": "^1.0.1"
+    "nodemailer-markdown": "^1.0.1",
+    "randomstring": "^1.1.5"
   }
 }
