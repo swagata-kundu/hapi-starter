@@ -32,7 +32,7 @@ internals.applyRoutes = function(server, next) {
                 scope: 'admin'
             }
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             let _user = new User();
 
             const query = {
@@ -73,7 +73,7 @@ internals.applyRoutes = function(server, next) {
                 scope: 'admin'
             }
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             let _user = new User();
 
             const query = {

@@ -11,9 +11,7 @@ const manifest = {
     connections: [{
         port: Config.get('/port/api')
     }],
-    registrations: [{
-            plugin: 'hapi-auth-basic'
-        },
+    registrations: [{ plugin: 'hapi-auth-basic' },
         {
             plugin: './server/utils/auth'
         },
@@ -39,6 +37,12 @@ const manifest = {
             plugin: './server/api/user',
             options: {
                 routes: { prefix: '/api/user' }
+            }
+        },
+        {
+            plugin: './server/api/ads',
+            options: {
+                routes: { prefix: '/api/ads' }
             }
         }
     ]

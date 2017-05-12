@@ -82,8 +82,8 @@ class Model {
 
     /**
      * Gets the first document if selection parameters match with optional projection fields
-      @param {} condition 
-      @param {} projection (optional)
+     * @param {} condition 
+     * @param {} projection (optional)
      * 
      */
     getOne(condition, projection, callback) {
@@ -96,8 +96,8 @@ class Model {
 
     /**
      * Gets and populates the documents if selection parameters match
-      @param {} condition (optional)
-      @param {} fields (optional)
+     * @param {} condition (optional)
+     * @param {} fields (optional)
      * @returns Promise
      */
     findAndPopulate(condition = {}, fields = [], limit) {
@@ -111,8 +111,8 @@ class Model {
 
     /**
      * Gets and populates the first document if selection parameters match
-      @param {} condition 
-      @param {} fields (optional)
+     * @param {} condition 
+     * @param {} fields (optional)
      * @returns Promise
      */
     findOneAndPopulate(condition, fields = []) {
@@ -120,9 +120,10 @@ class Model {
     }
 
     /**
-     * Creates a new document
-      @param {} data 
-     * @returns Promise
+     * Create new document
+     * @param {any} data 
+     * @param {any} callback 
+     * @memberof Model
      */
     create(data, callback) {
         this.model(data).save(callback);
@@ -130,20 +131,26 @@ class Model {
 
 
     /**
-    * Creates a new document
-    @param {} data 
-    * @returns Promise
-    */
+     * 
+     * 
+     * @param {any} data 
+     * @memberof Model
+     */
     createMany(data) {
-            return this.model.insertMany(data);
-        }
-        /**
-         * Updates one document by '_id'
-          @param {} _id 
-          @param {} updates 
-          @param {} options 
-         * @returns Promise
-         */
+        return this.model.insertMany(data);
+    }
+
+
+    /**
+     * 
+     * 
+     * @param {any} _id 
+     * @param {any} updates 
+     * @param {any} [options={}] 
+     * @param {any} callback 
+     * 
+     * @memberof Model
+     */
     updateOne(_id, updates, options = {}, callback) {
         this.model.findOneAndUpdate({ _id }, updates, Object.assign({ new: true }, options)).exec(callback);
     }
@@ -161,8 +168,8 @@ class Model {
 
     /**
      * Deletes one document by '_id'
-      @param {} _id 
-      @param {} query 
+     * @param {} _id 
+     * @param {} query 
      * @returns Promise
      */
     delete(_id, query) {

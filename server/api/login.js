@@ -22,7 +22,7 @@ internals.applyRoutes = function(server, next) {
         config: {
             validate: {
                 payload: {
-                    email: Joi.string().required(),
+                    email: Joi.string().email().lowercase().required(),
                     password: Joi.string().min(6).max(50).required()
                 }
             },
@@ -42,7 +42,7 @@ internals.applyRoutes = function(server, next) {
                 }
             }]
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             const user = request.pre.user;
             const authHeader = 'Basic ' + new Buffer(user.email + ':' + request.payload.password).toString('base64');
 
@@ -64,7 +64,7 @@ internals.applyRoutes = function(server, next) {
         config: {
             validate: {
                 payload: {
-                    email: Joi.string().required()
+                    email: Joi.string().email().lowercase().required()
                 }
             },
             pre: [{
@@ -88,7 +88,7 @@ internals.applyRoutes = function(server, next) {
                 }
             }]
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             const userId = request.pre.user._id.toString();
             const mailer = request.server.plugins.mailer;
 

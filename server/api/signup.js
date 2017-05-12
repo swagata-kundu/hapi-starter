@@ -6,6 +6,7 @@ const Async = require('async');
 
 
 const User = require('../models/user');
+const Account = require('../models/account');
 const Response = require('../core/responseModel');
 
 const internals = {};
@@ -21,7 +22,7 @@ internals.applyRoutes = function(server, next) {
                 payload: {
                     firstName: Joi.string().min(3).max(10).required(),
                     lastName: Joi.string().min(3).max(10).required(),
-                    email: Joi.string().required(),
+                    email: Joi.string().email().lowercase().required(),
                     password: Joi.string().min(6).max(50).required(),
                     deviceId: Joi.string().optional()
                 }
@@ -43,15 +44,23 @@ internals.applyRoutes = function(server, next) {
                 }
             }]
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             const mailer = request.server.plugins.mailer;
             Async.auto({
                 user: (done) => {
                     let _user = new User();
                     _user.create(request.payload, done);
                 },
-                welcome: ['user', (results, done) => {
 
+                account: ['user', (results, done) => {
+                    let _account = new Account();
+                    let accountDoc = {
+                        'owner': results.user._id.toString()
+                    };
+                    _account.create(accountDoc, done);
+                }],
+
+                welcome: ['user', (results, done) => {
                     const emailOptions = {
                         subject: 'Your account',
                         to: {

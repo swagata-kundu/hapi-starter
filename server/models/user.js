@@ -118,7 +118,7 @@ class User extends Model {
                 return callback(err);
             }
             results.newUser._doc.password = results.passwordHash.password;
-            callback(null, results.newUser._doc);
+            callback(null, results.newUser.toJSON());
         });
 
     }
