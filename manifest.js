@@ -12,6 +12,9 @@ const manifest = {
         port: Config.get('/port/api')
     }],
     registrations: [{ plugin: 'hapi-auth-basic' },
+        { plugin: 'vision' },
+        { plugin: 'inert' },
+        { plugin: 'lout' },
         {
             plugin: './server/utils/auth'
         },
