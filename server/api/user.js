@@ -93,7 +93,7 @@ internals.applyRoutes = function(server, next) {
 };
 
 exports.register = function(server, options, next) {
-    server.dependency(['mongoose'], internals.applyRoutes);
+    server.dependency(['mongoose', 'auth'], internals.applyRoutes);
     next();
 };
 

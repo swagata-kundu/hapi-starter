@@ -145,14 +145,23 @@ internals.applyRoutes = function(server, next) {
                     skip: request.payload.skip,
                     limit: request.payload.limit,
                     sort: request.payload.sort,
-                    order: request.payload.order
+                    order: request.payload.order,
+                    populate: [{
+                        path: 'creator',
+                        select: 'email firstName lastName'
+                    }]
                 },
                 projection: {}
             };
 
             if (user.role !== 'admin') {
-                query.condition.
+                query.condition.creator = user._id.toString();
             }
+
+            let _ads = new Ads();
+            _ads.getSortedAndPaginated(query.condition, query.projection, query.options).then((result) => {
+                return reply(new Response('', result));
+            }, (error) => { return reply(Boom.badImplementation()); });
         }
     });
 
