@@ -8,6 +8,7 @@ const Async = require('async');
 const User = require('../models/user');
 const Account = require('../models/account');
 const Response = require('../core/responseModel');
+const Message = require('../assets/messages');
 
 const internals = {};
 
@@ -42,7 +43,10 @@ internals.applyRoutes = function(server, next) {
                         reply(true);
                     });
                 }
-            }]
+            }],
+            tags: ['api', 'signup'],
+            description: 'Sign up as vendor'
+
         },
         handler: (request, reply) => {
             const mailer = request.server.plugins.mailer;
@@ -95,6 +99,43 @@ internals.applyRoutes = function(server, next) {
             });
         }
     });
+
+
+    server.route({
+        method: 'PATCH',
+        path: '/profile',
+        config: {
+            validate: {
+                payload: {
+                    firstName: Joi.string().min(3).max(10).required(),
+                    lastName: Joi.string().min(3).max(10).required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'profile'],
+            description: 'Update user profile'
+        },
+        handler: (request, reply) => {
+            const userId = request.auth.credentials._id.toString();
+            const updateDoc = {
+                firstName: request.payload.firstName,
+                lastName: request.payload.lastName
+            };
+            let _user = new User();
+            _user.updateOne(userId, updateDoc, {}, (err) => {
+                if (err) {
+                    return reply(Boom
+                        .badImplementation());
+                }
+                return reply(new Response(Message.PROFILE_UPDATE));
+            });
+        }
+
+    });
+
 
     next();
 };

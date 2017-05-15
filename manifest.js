@@ -7,6 +7,23 @@ const criteria = {
     env: process.env.NODE_ENV
 };
 
+const swaggerOption = {
+    info: {
+        title: 'AdClad',
+        description: 'API documentation AdClad',
+        version: '1.0',
+    },
+    grouping: 'tags',
+    documentationPath: '/docs',
+    basePath: '/api/',
+    securityDefinitions: {
+        'type': 'basic',
+        'name': 'Authorization',
+        'in': 'header'
+    }
+};
+
+
 const manifest = {
     connections: [{
         port: Config.get('/port/api')
@@ -14,7 +31,12 @@ const manifest = {
     registrations: [{ plugin: 'hapi-auth-basic' },
         { plugin: 'vision' },
         { plugin: 'inert' },
-        { plugin: 'lout' },
+        {
+            plugin: {
+                register: 'hapi-swagger',
+                options: swaggerOption
+            }
+        },
         {
             plugin: './server/utils/auth'
         },

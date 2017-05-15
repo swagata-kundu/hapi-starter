@@ -71,7 +71,8 @@ internals.applyRoutes = function(server, next) {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
             },
-            pre: [internals.preWare.validateBalance]
+            pre: [internals.preWare.validateBalance],
+            tags: ['api', 'ads']
         },
         handler: (request, reply) => {
 
@@ -100,7 +101,8 @@ internals.applyRoutes = function(server, next) {
             auth: {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
-            }
+            },
+            tags: ['api', 'ads']
         },
         handler: (request, reply) => {
             const adId = request.params._id;
@@ -132,7 +134,8 @@ internals.applyRoutes = function(server, next) {
             auth: {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
-            }
+            },
+            tags: ['api', 'ads']
         },
         handler: (request, reply) => {
             const user = request.auth.credentials;

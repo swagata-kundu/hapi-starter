@@ -30,7 +30,9 @@ internals.applyRoutes = function(server, next) {
             auth: {
                 strategy: 'simple',
                 scope: 'admin'
-            }
+            },
+            description: 'Lists vendors',
+            tags: ['api', 'user']
         },
         handler: (request, reply) => {
             let _user = new User();
@@ -71,7 +73,10 @@ internals.applyRoutes = function(server, next) {
             auth: {
                 strategy: 'simple',
                 scope: 'admin'
-            }
+            },
+            tags: ['api', 'user'],
+            description: 'Delete vendors'
+
         },
         handler: (request, reply) => {
             let _user = new User();
@@ -88,6 +93,8 @@ internals.applyRoutes = function(server, next) {
             });
         }
     });
+
+
 
     next();
 };

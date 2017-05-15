@@ -40,7 +40,8 @@ internals.applyRoutes = function(server, next) {
                         return reply(Boom.unauthorized('Incorrect email or password'));
                     });
                 }
-            }]
+            }],
+            tags: ['api', 'login']
         },
         handler: (request, reply) => {
             const user = request.pre.user;
@@ -86,7 +87,8 @@ internals.applyRoutes = function(server, next) {
                         return reply(Boom.notFound('User not registered'));
                     });
                 }
-            }]
+            }],
+            tags: ['api', 'login']
         },
         handler: (request, reply) => {
             const userId = request.pre.user._id.toString();
