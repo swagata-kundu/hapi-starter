@@ -42,4 +42,4 @@ class Sponsor extends Model {
     }
 }
 
-module.exports = Account;
+module.exports = Sponsor;

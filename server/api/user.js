@@ -31,7 +31,7 @@ internals.applyRoutes = function(server, next) {
                 strategy: 'simple',
                 scope: 'admin'
             },
-            description: 'Lists vendors',
+            description: 'Lists vendors for Admin',
             tags: ['api', 'user']
         },
         handler: (request, reply) => {
@@ -94,7 +94,39 @@ internals.applyRoutes = function(server, next) {
         }
     });
 
+    server.route({
+        method: 'PATCH',
+        path: '/status',
+        config: {
+            validate: {
+                payload: {
+                    _id: Joi.string().required(),
+                    status: Joi.bool().required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'user'],
+            description: 'Change Vendor Status'
 
+        },
+        handler: (request, reply) => {
+            let _user = new User();
+
+            const query = {
+                isActive: request.payload.status
+            };
+
+            _user.updateOne(request.payload._id, query, {}, (err, result) => {
+                if (err) {
+                    return reply(Boom.badImplementation());
+                }
+                return reply(new Response(Message.SUCCESS));
+            });
+        }
+    });
 
     next();
 };

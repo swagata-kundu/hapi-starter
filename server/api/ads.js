@@ -73,7 +73,8 @@ internals.applyRoutes = function(server, next) {
                 scope: ['admin', 'vendor']
             },
             pre: [internals.preWare.validateBalance],
-            tags: ['api', 'ads']
+            tags: ['api', 'ads'],
+            description: 'Create Advertisement'
         },
         handler: (request, reply) => {
 
@@ -106,7 +107,9 @@ internals.applyRoutes = function(server, next) {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
             },
-            tags: ['api', 'ads']
+            tags: ['api', 'ads'],
+            description: 'Get Advertisement detail for admin'
+
         },
         handler: (request, reply) => {
             const adId = request.params._id;
@@ -139,7 +142,9 @@ internals.applyRoutes = function(server, next) {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
             },
-            tags: ['api', 'ads']
+            tags: ['api', 'ads'],
+            description: 'Advertisement listing admin'
+
         },
         handler: (request, reply) => {
             const user = request.auth.credentials;
@@ -172,6 +177,125 @@ internals.applyRoutes = function(server, next) {
         }
     });
 
+
+    server.route({
+        method: 'PATCH',
+        path: '/',
+        config: {
+            validate: {
+                payload: {
+                    _id: Joi.objectId(),
+                    type: Joi.string().valid('image', 'video').required(),
+                    url: Joi.string().required().uri(),
+                    duration: Joi.number().max(30).positive(0).required(),
+                    biddingAmount: Joi.number().positive().required(),
+                    dalyBudget: Joi.number().positive().required(),
+                    monthlyBudget: Joi.number().positive().required(),
+                    locationName: Joi.string().optional(),
+                    radius: Joi.number().positive().optional(),
+                    location: Joi.object().keys({
+                        latitude: Joi.number().required(),
+                        longitude: Joi.number().required()
+                    }).required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            pre: [internals.preWare.validateBalance],
+            tags: ['api', 'ads'],
+            description: 'Update Advertisement'
+
+        },
+        handler: (request, reply) => {
+
+
+            let document = Object.assign({}, request.payload);
+
+            delete document._id;
+
+            document.location = [request.payload.location.longitude, request.payload.location.latitude];
+
+            let _ads = new Ads();
+            _ads.updateOne(request.payload._id, document, {}, (err) => {
+                if (err) {
+                    return reply(err);
+                }
+                return reply(new Response(Message.SUCCESS));
+            });
+
+        }
+    });
+
+
+    server.route({
+        method: 'DELETE',
+        path: '/',
+        config: {
+            validate: {
+                payload: {
+                    _id: Joi.string().required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'ads'],
+            description: 'Delete Advertisement'
+
+        },
+        handler: (request, reply) => {
+            let _ad = new Ads();
+
+            const query = {
+                isDeleted: true
+            };
+
+            _ad.updateOne(request.payload._id, query, {}, (err, result) => {
+                if (err) {
+                    return reply(Boom.badImplementation());
+                }
+                return reply(new Response(Message.SUCCESS));
+            });
+        }
+    });
+
+
+    server.route({
+        method: 'PATCH',
+        path: '/status',
+        config: {
+            validate: {
+                payload: {
+                    _id: Joi.string().required(),
+                    status: Joi.bool().required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'ads'],
+            description: 'Change Advertisement Status'
+
+        },
+        handler: (request, reply) => {
+            let _ad = new Ads();
+
+            const query = {
+                isActive: request.payload.status
+            };
+
+            _ad.updateOne(request.payload._id, query, {}, (err, result) => {
+                if (err) {
+                    return reply(Boom.badImplementation());
+                }
+                return reply(new Response(Message.SUCCESS));
+            });
+        }
+    });
 
     next();
 

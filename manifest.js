@@ -15,7 +15,10 @@ const swaggerOption = {
     },
     grouping: 'tags',
     documentationPath: '/docs',
-    basePath: '/api/'
+    basePath: '/api/',
+    jsonEditor: true,
+    sortTags: 'name',
+    sortEndpoints: 'method'
 };
 
 
@@ -63,6 +66,12 @@ const manifest = {
             plugin: './server/api/ads',
             options: {
                 routes: { prefix: '/api/ads' }
+            }
+        },
+        {
+            plugin: './server/api/sponsor',
+            options: {
+                routes: { prefix: '/api/sponsor' }
             }
         },
         {
