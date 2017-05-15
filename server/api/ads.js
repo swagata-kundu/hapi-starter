@@ -3,6 +3,7 @@
 const Boom = require('boom');
 const Joi = require('joi');
 const Async = require('async');
+Joi.objectId = require('joi-objectid')(Joi);
 
 
 const Ads = require('../models/ads');
@@ -98,6 +99,9 @@ internals.applyRoutes = function(server, next) {
         method: 'GET',
         path: '/admin/{_id}',
         config: {
+            validate: {
+                params: { _id: Joi.objectId() }
+            },
             auth: {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']

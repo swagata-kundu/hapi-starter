@@ -2,7 +2,10 @@
 
 const Boom = require('boom');
 const Fs = require('fs');
-
+const Joi = require('joi');
+const _ = require('lodash');
+const Path = require('path');
+const Moment = require('moment');
 
 const Response = require('../core/responseModel');
 const Message = require('../assets/messages');
@@ -20,14 +23,46 @@ internals.applyRoutes = function(server, next) {
                 parse: true,
                 allow: 'multipart/form-data'
             },
+            validate: {
+                payload: {
+                    file: Joi.any().meta({ swaggerType: 'file' }).description('file').required()
+                }
+            },
+            plugins: {
+                'hapi-swagger': {
+                    payloadType: 'form'
+                }
+            },
             auth: {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
             },
+            tags: ['api', 'upload'],
+
         },
         handler: (request, reply) => {
-            var data = request.payload;
-            return reply('success');
+            const file = request.payload.file,
+                fileName = Moment.now().toString() + '_' + file.filename;
+
+            if (_.isObject(file)) {
+                const filePath = Path.resolve('./uploads/' + fileName);
+                Fs.readFile(file.path, (err, content) => {
+                    if (err) {
+                        return reply(Boom.badImplementation());
+                    }
+                    Fs.writeFile(filePath, content, (err) => {
+                        if (err) {
+                            return reply(Boom.badImplementation());
+                        }
+                        const result = {
+                            url: '/uploads/' + fileName
+                        };
+                        return reply(new Response(Message.SUCCESS, result));
+                    });
+                });
+            } else {
+                return reply(Boom.badData());
+            }
         }
     });
 

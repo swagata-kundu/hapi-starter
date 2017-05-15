@@ -15,12 +15,7 @@ const swaggerOption = {
     },
     grouping: 'tags',
     documentationPath: '/docs',
-    basePath: '/api/',
-    securityDefinitions: {
-        'type': 'basic',
-        'name': 'Authorization',
-        'in': 'header'
-    }
+    basePath: '/api/'
 };
 
 
