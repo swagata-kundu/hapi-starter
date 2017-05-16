@@ -31,21 +31,6 @@ const adsSchema = new Mongoose.Schema({
     },
     url: { type: String, required: true },
     duration: { type: Number, default: 0 },
-    biddingAmount: {
-        type: Number,
-        default: 0,
-        required: true
-    },
-    dalyBudget: {
-        type: Number,
-        default: 0,
-        required: true
-    },
-    monthlyBudget: {
-        type: Number,
-        default: 0,
-        required: true
-    },
     locationName: { type: String, default: '' },
     location: {
         type: [Number],
@@ -55,16 +40,13 @@ const adsSchema = new Mongoose.Schema({
         type: Number,
         default: 1
     },
-    creator: { type: Mongoose.Schema.Types.ObjectId, ref: 'User' },
-    isApproved: { type: Boolean, default: false },
-    isRejected: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false }
 
 }, options);
 
 
-const adsModel = Mongoose.model('Ads', adsSchema);
+const defaultAdsModel = Mongoose.model('DefaultAds', adsSchema);
 
 
 /**
@@ -72,15 +54,15 @@ const adsModel = Mongoose.model('Ads', adsSchema);
  * @class Ads
  * @extends {Model}
  */
-class Ads extends Model {
+class DefaultAds extends Model {
 
     constructor() {
-        super(adsModel);
+        super(defaultAdsModel);
     }
 
     static get modelName() {
-        return adsModel.modelName;
+        return defaultAdsModel.modelName;
     }
 }
 
-module.exports = Ads;
+module.exports = DefaultAds;

@@ -24,6 +24,7 @@ const userSchema = new Mongoose.Schema({
     lastName: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, index: true },
+    phoneNo: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     deviceId: { type: String, required: false, default: '' },
@@ -108,7 +109,8 @@ class User extends Model {
                     firstName: document.firstName.toLowerCase(),
                     lastName: document.lastName.toLowerCase(),
                     email: document.email.toLowerCase(),
-                    deviceId: document.deviceId ? document.deviceId : ''
+                    deviceId: document.deviceId ? document.deviceId : '',
+                    phoneNo: document.phoneNo
                 };
                 this.model
                     .create(documentUpdated, done);

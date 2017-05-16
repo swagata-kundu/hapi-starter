@@ -18,7 +18,14 @@ const swaggerOption = {
     basePath: '/api/',
     jsonEditor: true,
     sortTags: 'name',
-    sortEndpoints: 'method'
+    sortEndpoints: 'method',
+    securityDefinitions: {
+        Bearer: {
+            type: 'apiKey',
+            name: 'Authorization',
+            in: 'header'
+        }
+    }
 };
 
 
@@ -66,6 +73,12 @@ const manifest = {
             plugin: './server/api/ads',
             options: {
                 routes: { prefix: '/api/ads' }
+            }
+        },
+        {
+            plugin: './server/api/defaultAds',
+            options: {
+                routes: { prefix: '/api/ads/default' }
             }
         },
         {

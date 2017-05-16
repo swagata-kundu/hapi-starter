@@ -8,6 +8,7 @@ const Bcrypt = require('bcrypt');
 
 const User = require('../models/user');
 const Response = require('../core/responseModel');
+const Message = require('../assets/messages');
 
 
 
@@ -41,7 +42,8 @@ internals.applyRoutes = function(server, next) {
                     });
                 }
             }],
-            tags: ['api', 'login']
+            tags: ['api', 'login'],
+            description: 'User login'
         },
         handler: (request, reply) => {
             const user = request.pre.user;
@@ -144,6 +146,44 @@ internals.applyRoutes = function(server, next) {
         }
     });
 
+
+    server.route({
+        method: 'PATCH',
+        path: '/login/changepassword',
+        config: {
+            validate: {
+                payload: {
+                    password: Joi.string().min(6).max(50).required()
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'login'],
+            description: 'Change user password'
+        },
+        handler: (request, reply) => {
+            const userId = request.auth.credentials._id.toString();
+            Async.auto({
+                encrypt: (done) => {
+                    User.generatePasswordHash(request.payload.password, done);
+                },
+                updateUser: ['encrypt', (results, done) => {
+                    let hash = results.encrypt.hash;
+                    let _user = new User();
+                    _user.updateOne(userId, { password: hash }, {}, done);
+                }]
+            }, (err) => {
+                if (err) {
+                    return reply(Boom.badImplementation());
+                }
+                const authHeader = 'Basic ' + new Buffer(request.auth.credentials.email + ':' + request.payload.password).toString('base64');
+                return reply(new Response(Message.SUCCESS, { authHeader: authHeader }));
+            });
+        }
+
+    });
 
     next();
 };
