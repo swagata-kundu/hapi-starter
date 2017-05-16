@@ -1,0 +1,21 @@
+{
+    "info": {
+        "title": "AdClad",
+        "description": "API documentation AdClad",
+        "version": "1.0"
+    },
+    "grouping": "tags",
+    "documentationPath": "/docs",
+    "basePath": "/api/",
+    "jsonEditor": false,
+    "sortTags": "name",
+    "sortEndpoints": "path",
+    "expanded": "none",
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

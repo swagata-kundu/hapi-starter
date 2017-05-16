@@ -2,30 +2,10 @@
 
 const Config = require('./config');
 const Confidence = require('confidence');
+const SwaggerOption = require('./swagger-option');
 
 const criteria = {
     env: process.env.NODE_ENV
-};
-
-const swaggerOption = {
-    info: {
-        title: 'AdClad',
-        description: 'API documentation AdClad',
-        version: '1.0',
-    },
-    grouping: 'tags',
-    documentationPath: '/docs',
-    basePath: '/api/',
-    jsonEditor: true,
-    sortTags: 'name',
-    sortEndpoints: 'method',
-    securityDefinitions: {
-        Bearer: {
-            type: 'apiKey',
-            name: 'Authorization',
-            in: 'header'
-        }
-    }
 };
 
 
@@ -39,7 +19,7 @@ const manifest = {
         {
             plugin: {
                 register: 'hapi-swagger',
-                options: swaggerOption
+                options: SwaggerOption
             }
         },
         {
@@ -91,6 +71,12 @@ const manifest = {
             plugin: './server/api/upload',
             options: {
                 routes: { prefix: '/api/upload' }
+            }
+        },
+        {
+            plugin: './server/api/events',
+            options: {
+                routes: { prefix: '/api/events' }
             }
         }
     ]
