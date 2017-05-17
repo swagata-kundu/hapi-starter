@@ -7,6 +7,17 @@ const SwaggerOption = require('./swagger-option');
 const criteria = {
     env: process.env.NODE_ENV
 };
+const goodOptions = {
+    ops: {
+        interval: 1000
+    },
+    reporters: {
+        myConsoleReporter: [{
+            module: 'good-console',
+            args: [{ log: '*', response: '*' }]
+        }, 'stdout']
+    }
+};
 
 
 const manifest = {
@@ -16,6 +27,13 @@ const manifest = {
     registrations: [{ plugin: 'hapi-auth-basic' },
         { plugin: 'vision' },
         { plugin: 'inert' },
+        { plugin: 'blipp' },
+        {
+            plugin: {
+                register: 'good',
+                options: goodOptions
+            }
+        },
         {
             plugin: {
                 register: 'hapi-swagger',

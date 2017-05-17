@@ -18,7 +18,7 @@ const internals = {};
 internals.applyRoutes = function(server, next) {
 
     server.route({
-        method: 'PUT',
+        method: 'POST',
         path: '/',
         config: {
             validate: {
@@ -51,23 +51,22 @@ internals.applyRoutes = function(server, next) {
             document.location = [request.payload.location.longitude, request.payload.location.latitude];
 
             let _event = new Events();
-            _event.create(document, (err) => {
+            _event.create(document, (err, doc) => {
                 if (err) {
                     return reply(err);
                 }
-                return reply(new Response(Message.SUCCESS));
+                return reply(new Response(Message.SUCCESS), doc.toJSON());
             });
 
         }
     });
 
     server.route({
-        method: 'PATCH',
-        path: '/',
+        method: 'PUT',
+        path: '/{_id}',
         config: {
             validate: {
                 payload: {
-                    _id: Joi.objectId(),
                     title: Joi.string().required(),
                     description: Joi.string().required(),
                     locationName: Joi.string().optional(),
@@ -79,7 +78,9 @@ internals.applyRoutes = function(server, next) {
                         type: Joi.string().valid('image', 'video').required(),
                         url: Joi.string().required().uri(),
                     })).required()
-                }
+                },
+                params: { _id: Joi.objectId() }
+
             },
             auth: {
                 strategy: 'simple',
@@ -103,13 +104,13 @@ internals.applyRoutes = function(server, next) {
 
                 let _event = new Events();
 
-                _event.updateOne(request.payload._id, query, {
+                _event.updateOne(request.params._id, query, {
                     multi: true
-                }, (err, result) => {
+                }, (err, doc) => {
                     if (err) {
                         return reply(err);
                     }
-                    return reply(new Response(Message.SUCCESS));
+                    return reply(new Response(Message.SUCCESS), doc.toJSON());
                 });
             }
         }
@@ -145,11 +146,11 @@ internals.applyRoutes = function(server, next) {
     });
 
     server.route({
-        method: 'POST',
+        method: 'GET',
         path: '/admin/',
         config: {
             validate: {
-                payload: {
+                params: {
                     sort: Joi.string().min(3).max(50).default('updatedAt'),
                     order: Joi.number().max(1).optional().default(-1),
                     limit: Joi.number().default(20),
@@ -170,13 +171,13 @@ internals.applyRoutes = function(server, next) {
             let query = {
                 condition: {
                     isDeleted: false,
-                    isActive: request.payload.isActive,
+                    isActive: request.params.isActive,
                 },
                 options: {
-                    skip: request.payload.skip,
-                    limit: request.payload.limit,
-                    sort: request.payload.sort,
-                    order: request.payload.order
+                    skip: request.params.skip,
+                    limit: request.params.limit,
+                    sort: request.params.sort,
+                    order: request.params.order
                 },
                 projection: {}
             };
@@ -191,10 +192,10 @@ internals.applyRoutes = function(server, next) {
 
     server.route({
         method: 'DELETE',
-        path: '/',
+        path: '/{_id}',
         config: {
             validate: {
-                payload: {
+                params: {
                     _id: Joi.string().required()
                 }
             },
@@ -213,7 +214,7 @@ internals.applyRoutes = function(server, next) {
                 isDeleted: true
             };
 
-            _events.updateOne(request.payload._id, query, {}, (err, result) => {
+            _events.updateOne(request.params._id, query, {}, (err, result) => {
                 if (err) {
                     return reply(Boom.badImplementation());
                 }

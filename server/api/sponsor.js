@@ -15,7 +15,7 @@ const internals = {};
 internals.applyRoutes = function(server, next) {
 
     server.route({
-        method: 'PUT',
+        method: 'POST',
         path: '/',
         config: {
             validate: {
@@ -41,11 +41,11 @@ internals.applyRoutes = function(server, next) {
 
             let _sponsor = new Sponsor();
 
-            _sponsor.create(document, (err) => {
+            _sponsor.create(document, (err, doc) => {
                 if (err) {
                     return reply(err);
                 }
-                return reply(new Response(Message.SUCCESS));
+                return reply(new Response(Message.SUCCESS), doc.toJSON());
             });
 
         }
@@ -53,11 +53,11 @@ internals.applyRoutes = function(server, next) {
 
 
     server.route({
-        method: 'POST',
+        method: 'GET',
         path: '/admin/',
         config: {
             validate: {
-                payload: {
+                params: {
                     sort: Joi.string().min(3).max(50).default('updatedAt'),
                     order: Joi.number().max(1).optional().default(-1),
                     limit: Joi.number().default(20),
@@ -81,10 +81,10 @@ internals.applyRoutes = function(server, next) {
                     isDeleted: false
                 },
                 options: {
-                    skip: request.payload.skip,
-                    limit: request.payload.limit,
-                    sort: request.payload.sort,
-                    order: request.payload.order
+                    skip: request.params.skip,
+                    limit: request.params.limit,
+                    sort: request.params.sort,
+                    order: request.params.order
                 },
                 projection: {}
             };
@@ -128,16 +128,16 @@ internals.applyRoutes = function(server, next) {
 
 
     server.route({
-        method: 'PATCH',
+        method: 'PUT',
         path: '/',
         config: {
             validate: {
                 payload: {
-                    _id: Joi.objectId(),
                     name: Joi.string().optional().default(''),
                     url: Joi.string().required().uri(),
                     sortOrder: Joi.number().max(6).positive().required()
-                }
+                },
+                params: { _id: Joi.objectId() }
             },
             auth: {
                 strategy: 'simple',
@@ -152,17 +152,16 @@ internals.applyRoutes = function(server, next) {
 
             let document = Object.assign({}, request.payload);
 
-            delete document._id;
 
 
 
             let _sponsor = new Sponsor();
 
-            _sponsor.updateOne(request.payload._id, document, {}, (err) => {
+            _sponsor.updateOne(request.params._id, document, {}, (err, doc) => {
                 if (err) {
                     return reply(err);
                 }
-                return reply(new Response(Message.SUCCESS));
+                return reply(new Response(Message.SUCCESS), doc.toJSON());
             });
 
         }
@@ -174,7 +173,7 @@ internals.applyRoutes = function(server, next) {
         path: '/',
         config: {
             validate: {
-                payload: {
+                params: {
                     _id: Joi.string().required()
                 }
             },
@@ -193,7 +192,7 @@ internals.applyRoutes = function(server, next) {
                 isDeleted: true
             };
 
-            _sponsor.updateOne(request.payload._id, query, {}, (err, result) => {
+            _sponsor.updateOne(request.params._id, query, {}, (err, result) => {
                 if (err) {
                     return reply(Boom.badImplementation());
                 }

@@ -24,7 +24,8 @@ internals.applyRoutes = function(server, next) {
             validate: {
                 payload: {
                     email: Joi.string().email().lowercase().required(),
-                    password: Joi.string().min(6).max(50).required()
+                    password: Joi.string().min(6).max(50).required(),
+                    deviceId: Joi.string().optional()
                 }
             },
             pre: [{
@@ -40,6 +41,16 @@ internals.applyRoutes = function(server, next) {
                         }
                         return reply(Boom.unauthorized('Incorrect email or password'));
                     });
+                }
+            }, {
+                assign: 'updateDevice',
+                method: function(request, reply) {
+                    if (request.payload.deviceId) {
+                        const user = request.pre.user;
+                        let _user = new User();
+                        _user.updateOne(user._id, { deviceId: request.payload.deviceId }, (err) => { return reply(err); });
+                    }
+                    return reply();
                 }
             }],
             tags: ['api', 'login'],

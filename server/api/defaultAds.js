@@ -21,7 +21,7 @@ const internals = {};
 internals.applyRoutes = function(server, next) {
 
     server.route({
-        method: 'PUT',
+        method: 'POST',
         path: '/',
         config: {
             validate: {
@@ -93,11 +93,11 @@ internals.applyRoutes = function(server, next) {
 
 
     server.route({
-        method: 'POST',
+        method: 'GET',
         path: '/admin/',
         config: {
             validate: {
-                payload: {
+                query: {
                     sort: Joi.string().min(3).max(50).default('updatedAt'),
                     order: Joi.number().max(1).optional().default(-1),
                     limit: Joi.number().default(20),
@@ -118,13 +118,13 @@ internals.applyRoutes = function(server, next) {
             let query = {
                 condition: {
                     isDeleted: false,
-                    isActive: request.payload.isActive,
+                    isActive: request.query.isActive,
                 },
                 options: {
-                    skip: request.payload.skip,
-                    limit: request.payload.limit,
-                    sort: request.payload.sort,
-                    order: request.payload.order
+                    skip: request.query.skip,
+                    limit: request.query.limit,
+                    sort: request.query.sort,
+                    order: request.query.order
                 },
                 projection: {}
             };
@@ -138,12 +138,11 @@ internals.applyRoutes = function(server, next) {
 
 
     server.route({
-        method: 'PATCH',
-        path: '/',
+        method: 'PUT',
+        path: '/{_id}',
         config: {
             validate: {
                 payload: {
-                    _id: Joi.objectId(),
                     type: Joi.string().valid('image', 'video').required(),
                     url: Joi.string().required().uri(),
                     duration: Joi.number().max(30).positive(0).required(),
@@ -153,7 +152,8 @@ internals.applyRoutes = function(server, next) {
                         latitude: Joi.number().required(),
                         longitude: Joi.number().required()
                     }).required()
-                }
+                },
+                params: { _id: Joi.objectId() }
             },
             auth: {
                 strategy: 'simple',
@@ -168,16 +168,15 @@ internals.applyRoutes = function(server, next) {
 
             let document = Object.assign({}, request.payload);
 
-            delete document._id;
 
             document.location = [request.payload.location.longitude, request.payload.location.latitude];
 
             let _ads = new Ads();
-            _ads.updateOne(request.payload._id, document, {}, (err) => {
+            _ads.updateOne(request.params._id, document, {}, (err, doc) => {
                 if (err) {
                     return reply(err);
                 }
-                return reply(new Response(Message.SUCCESS));
+                return reply(new Response(Message.SUCCESS, doc.toJSON()));
             });
 
         }
@@ -186,10 +185,10 @@ internals.applyRoutes = function(server, next) {
 
     server.route({
         method: 'DELETE',
-        path: '/',
+        path: '/{_id}',
         config: {
             validate: {
-                payload: {
+                params: {
                     _id: Joi.string().required()
                 }
             },
@@ -208,7 +207,7 @@ internals.applyRoutes = function(server, next) {
                 isDeleted: true
             };
 
-            _ad.updateOne(request.payload._id, query, {}, (err, result) => {
+            _ad.updateOne(request.params._id, query, {}, (err, result) => {
                 if (err) {
                     return reply(Boom.badImplementation());
                 }
@@ -244,11 +243,11 @@ internals.applyRoutes = function(server, next) {
 
             query[request.payload.field] = request.payload.status;
 
-            _ad.updateOne(request.payload._id, query, {}, (err, result) => {
+            _ad.updateOne(request.payload._id, query, {}, (err, doc) => {
                 if (err) {
                     return reply(Boom.badImplementation());
                 }
-                return reply(new Response(Message.SUCCESS));
+                return reply(new Response(Message.SUCCESS, doc.toJSON()));
             });
         }
     });

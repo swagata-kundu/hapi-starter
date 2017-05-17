@@ -15,11 +15,11 @@ const internals = {};
 internals.applyRoutes = function(server, next) {
 
     server.route({
-        method: 'POST',
+        method: 'GET',
         path: '/',
         config: {
             validate: {
-                payload: {
+                params: {
                     sort: Joi.string().min(3).max(50).default('updatedAt'),
                     order: Joi.number().max(1).optional().default(-1),
                     limit: Joi.number().default(20),
@@ -43,10 +43,10 @@ internals.applyRoutes = function(server, next) {
                     isDeleted: false
                 },
                 options: {
-                    skip: request.payload.skip,
-                    limit: request.payload.limit,
-                    sort: request.payload.sort,
-                    order: request.payload.order
+                    skip: request.params.skip,
+                    limit: request.params.limit,
+                    sort: request.params.sort,
+                    order: request.params.order
                 },
                 projection: {
                     password: false
@@ -63,10 +63,10 @@ internals.applyRoutes = function(server, next) {
 
     server.route({
         method: 'DELETE',
-        path: '/',
+        path: '/{_id}',
         config: {
             validate: {
-                payload: {
+                params: {
                     _id: Joi.string().required()
                 }
             },
@@ -85,7 +85,7 @@ internals.applyRoutes = function(server, next) {
                 isDeleted: true
             };
 
-            _user.updateOne(request.payload._id, query, {}, (err, result) => {
+            _user.updateOne(request.params._id, query, {}, (err, result) => {
                 if (err) {
                     return reply(Boom.badImplementation());
                 }

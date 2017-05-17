@@ -7,9 +7,9 @@
     "grouping": "tags",
     "documentationPath": "/docs",
     "basePath": "/api/",
-    "jsonEditor": false,
+    "jsonEditor": true,
     "sortTags": "name",
-    "sortEndpoints": "path",
+    "sortEndpoints": "method",
     "expanded": "none",
     "securityDefinitions": {
         "Bearer": {
