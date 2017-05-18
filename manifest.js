@@ -9,7 +9,7 @@ const criteria = {
 };
 const goodOptions = {
     ops: {
-        interval: 1000
+        interval: 1000 * 10
     },
     reporters: {
         myConsoleReporter: [{

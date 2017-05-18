@@ -103,7 +103,7 @@ internals.applyRoutes = function(server, next) {
 
 
     server.route({
-        method: 'PATCH',
+        method: 'PUT',
         path: '/profile',
         config: {
             validate: {

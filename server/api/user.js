@@ -3,9 +3,10 @@
 const Boom = require('boom');
 const Joi = require('joi');
 const Async = require('async');
-
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const User = require('../models/user');
+const Account = require('../models/account');
 const Response = require('../core/responseModel');
 const Message = require('../assets/messages');
 
@@ -124,6 +125,58 @@ internals.applyRoutes = function(server, next) {
                     return reply(Boom.badImplementation());
                 }
                 return reply(new Response(Message.SUCCESS));
+            });
+        }
+    });
+
+
+    server.route({
+        method: 'GET',
+        path: '/{_id}',
+        config: {
+            validate: {
+                params: { _id: Joi.objectId() }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['admin', 'vendor']
+            },
+            tags: ['api', 'user'],
+            description: 'Get User detail'
+
+        },
+        handler: (request, reply) => {
+            let query = [];
+            query.push({
+                '$match': {
+                    '_id': ObjectId(request.params._id),
+                    isDeleted: false
+                }
+            });
+            query.push({
+                '$lookup': {
+                    from: 'accounts',
+                    localField: '_id',
+                    foreignField: 'owner',
+                    as: 'user_account'
+                }
+            });
+            query.push({
+                $unwind: {
+                    'path': '$user_account',
+                    'preserveNullAndEmptyArrays': true
+                }
+            });
+
+            let user = new User();
+            user.model.aggregate(query, (err, doc) => {
+                if (err) {
+                    return reply(err);
+                }
+                if (!doc || doc.length == 0) {
+                    return reply(Boom.notFound());
+                }
+                return reply(new Response('', doc[0]));
             });
         }
     });
