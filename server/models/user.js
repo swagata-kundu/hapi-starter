@@ -1,6 +1,6 @@
 const Mongoose = require('mongoose');
 const Async = require('async');
-const Bcrypt = require('bcrypt');
+const Bcrypt = require('bcryptjs');
 
 const Model = require('../core/model');
 

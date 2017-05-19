@@ -4,7 +4,7 @@ const Boom = require('boom');
 const Joi = require('joi');
 const Async = require('async');
 const Randomstring = require('randomstring');
-const Bcrypt = require('bcrypt');
+const Bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 const Response = require('../core/responseModel');
