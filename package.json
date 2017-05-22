@@ -35,6 +35,7 @@
     "nodemailer": "^4.0.1",
     "nodemailer-markdown": "^1.0.1",
     "randomstring": "^1.1.5",
+    "socket.io": "^2.0.1",
     "vision": "^4.1.1"
   }
 }

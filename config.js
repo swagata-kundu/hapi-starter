@@ -21,6 +21,14 @@ const config = {
             $default: 9000
         }
     },
+    labels: {
+        api: {
+            $filter: 'env',
+            test: ['api'],
+            production: ['api'],
+            $default: ['api']
+        }
+    },
     hapiMongoModels: {
         mongodb: {
             uri: {

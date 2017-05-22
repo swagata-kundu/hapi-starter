@@ -22,7 +22,8 @@ const goodOptions = {
 
 const manifest = {
     connections: [{
-        port: Config.get('/port/api')
+        port: Config.get('/port/api'),
+        labels: Config.get('/labels/api')
     }],
     registrations: [{ plugin: 'hapi-auth-basic' },
         { plugin: 'vision' },
@@ -39,6 +40,9 @@ const manifest = {
                 register: 'hapi-swagger',
                 options: SwaggerOption
             }
+        },
+        {
+            plugin: './server/utils/socket'
         },
         {
             plugin: './server/utils/auth'
