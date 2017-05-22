@@ -3,11 +3,13 @@
 const Boom = require('boom');
 const Joi = require('joi');
 const Async = require('async');
+const _ = require('lodash');
 Joi.objectId = require('joi-objectid')(Joi);
 
 
 const Ads = require('../models/ads');
 const Account = require('../models/account');
+const AdsHistory = require('../models/adsHistory');
 const Response = require('../core/responseModel');
 const Message = require('../assets/messages');
 
@@ -42,6 +44,40 @@ internals.preWare = {
                     return reply(Boom.notAcceptable(Message.INSUFFICIENT));
                 });
             }
+        }
+    },
+    findAdsDetail: {
+        assign: 'oldRecord',
+        method: function(request, reply) {
+            let user = request.auth.credentials;
+            const adId = request.params._id;
+            let ads = new Ads();
+            ads.getOneById(adId).then((doc) => {
+                if (!doc) {
+                    return reply(Boom.notFound(Message.CONTENT_NOT_FOUND));
+                }
+                let oldRecord = doc.toJSON();
+                let payload = Object.assign({}, request.payload);
+                let changeArray = [];
+
+                _.forEach(payload, (value, key) => {
+                    if (!_.isUndefined(oldRecord[key]) && !_.isFunction(value) &&
+                        !_.isObject(value) && oldRecord[key] !== value) {
+                        let change = {
+                            key: key,
+                            oldValue: oldRecord[key],
+                            newValue: value
+                        };
+                        changeArray.push(change);
+                    }
+                });
+                reply(changeArray.length > 0 ? {
+                    updatedBy: user._id,
+                    advertisement: adId,
+                    changes: changeArray
+                } : {});
+            }, (error) => { return reply(error); });
+
         }
     }
 };
@@ -209,7 +245,7 @@ internals.applyRoutes = function(server, next) {
                 strategy: 'simple',
                 scope: ['admin', 'vendor']
             },
-            pre: [internals.preWare.validateBalance],
+            pre: [internals.preWare.validateBalance, internals.preWare.findAdsDetail],
             tags: ['api', 'ads'],
             description: 'Update Advertisement'
 
@@ -219,17 +255,32 @@ internals.applyRoutes = function(server, next) {
 
             let document = Object.assign({}, request.payload);
 
-
             document.location = [request.payload.location.longitude, request.payload.location.latitude];
 
-            let _ads = new Ads();
-            _ads.updateOne(request.params._id, document, {}, (err, doc) => {
+            Async.auto({
+                update: (done) => {
+                    let _ads = new Ads();
+                    _ads.updateOne(request.params._id, document, {}, (err, doc) => {
+                        if (err) {
+                            return done(err);
+                        }
+                        return done(null, doc.toJSON());
+                    });
+                },
+                saveHistory: ['update', (results, done) => {
+                    let changes = request.pre.oldRecord;
+                    if (_.isEmpty(changes)) {
+                        return done(null);
+                    }
+                    let _adsHistory = new AdsHistory();
+                    _adsHistory.create(changes, done);
+                }]
+            }, (err, results) => {
                 if (err) {
                     return reply(err);
                 }
-                return reply(new Response(Message.SUCCESS, doc.toJSON()));
+                return reply(new Response(Message.SUCCESS, results.update));
             });
-
         }
     });
 
