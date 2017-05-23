@@ -7,7 +7,7 @@
     "grouping": "tags",
     "documentationPath": "/docs",
     "basePath": "/api/",
-    "jsonEditor": false,
+    "jsonEditor": true,
     "sortTags": "name",
     "sortEndpoints": "method",
     "expanded": "none",

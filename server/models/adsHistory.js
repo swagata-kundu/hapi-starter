@@ -29,7 +29,7 @@ const adsHistorSchema = new Mongoose.Schema({
         }, { _id: false })
     ]
 
-});
+}, options);
 
 
 

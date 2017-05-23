@@ -49,7 +49,7 @@ const adsSchema = new Mongoose.Schema({
     locationName: { type: String, default: '' },
     location: {
         type: [Number],
-        index: '2d'
+        index: '2dsphere'
     },
     radius: {
         type: Number,
