@@ -24,7 +24,6 @@ const userSchema = new Mongoose.Schema({
     lastName: { type: String, required: true },
     password: { type: String, required: true },
     email: { type: String, required: true, index: true },
-    phoneNo: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     deviceId: { type: String, required: false, default: '' },

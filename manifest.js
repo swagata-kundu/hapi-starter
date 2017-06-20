@@ -77,28 +77,11 @@ const manifest = {
                 routes: { prefix: '/api/ads' }
             }
         },
-        {
-            plugin: './server/api/defaultAds',
-            options: {
-                routes: { prefix: '/api/ads/default' }
-            }
-        },
-        {
-            plugin: './server/api/sponsor',
-            options: {
-                routes: { prefix: '/api/sponsor' }
-            }
-        },
+
         {
             plugin: './server/api/upload',
             options: {
                 routes: { prefix: '/api/upload' }
-            }
-        },
-        {
-            plugin: './server/api/events',
-            options: {
-                routes: { prefix: '/api/events' }
             }
         }
     ]

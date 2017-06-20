@@ -24,7 +24,6 @@ internals.applyRoutes = function(server, next) {
                     firstName: Joi.string().min(3).max(10).required(),
                     lastName: Joi.string().min(3).max(10).required(),
                     email: Joi.string().email().lowercase().required(),
-                    phoneNo: Joi.string().required().regex(/^[789]\d{9}$/).description('Valid mobile no').meta('Valid phone no'),
                     password: Joi.string().min(6).max(50).required(),
                     deviceId: Joi.string().optional()
                 }
@@ -110,7 +109,6 @@ internals.applyRoutes = function(server, next) {
                 payload: {
                     firstName: Joi.string().min(3).max(10).required(),
                     lastName: Joi.string().min(3).max(10).required(),
-                    phoneNo: Joi.string().required().regex(/^[789]\d{9}$/).description('Valid mobile no').meta('Valid phone no'),
                 }
             },
             auth: {
