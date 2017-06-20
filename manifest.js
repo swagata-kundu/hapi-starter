@@ -72,13 +72,6 @@ const manifest = {
             }
         },
         {
-            plugin: './server/api/ads',
-            options: {
-                routes: { prefix: '/api/ads' }
-            }
-        },
-
-        {
             plugin: './server/api/upload',
             options: {
                 routes: { prefix: '/api/upload' }

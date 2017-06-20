@@ -4,6 +4,7 @@ const Boom = require('boom');
 const Joi = require('joi');
 const Async = require('async');
 const ObjectId = require('mongoose').Types.ObjectId;
+Joi.objectId = require('joi-objectid')(Joi);
 
 const User = require('../models/user');
 const Account = require('../models/account');
