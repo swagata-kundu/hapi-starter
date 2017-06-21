@@ -6,11 +6,30 @@ const Async = require('async');
 
 
 const User = require('../models/user');
-const Account = require('../models/account');
 const Response = require('../core/responseModel');
 const Message = require('../assets/messages');
 
 const internals = {};
+
+
+internals.preware = {
+    checkEmail: {
+        assign: 'checkEmail',
+        method: function(request, reply) {
+            let _user = new User();
+            let condition = { email: request.payload.email, isDeleted: false };
+            _user.getOne(condition, {}, (err, users) => {
+                if (err) {
+                    return reply(err);
+                }
+                if (users) {
+                    return reply(Boom.conflict('Email already in use.'));
+                }
+                reply(true);
+            });
+        }
+    }
+};
 
 
 internals.applyRoutes = function(server, next) {
@@ -25,25 +44,10 @@ internals.applyRoutes = function(server, next) {
                     lastName: Joi.string().min(3).max(10).required(),
                     email: Joi.string().email().lowercase().required(),
                     password: Joi.string().min(6).max(50).required(),
-                    deviceId: Joi.string().optional()
+                    deviceId: Joi.string().optional().default()
                 }
             },
-            pre: [{
-                assign: 'checkEmail',
-                method: function(request, reply) {
-                    let _user = new User();
-                    let condition = { email: request.payload.email, isDeleted: false };
-                    _user.getOne(condition, {}, (err, users) => {
-                        if (err) {
-                            return reply(err);
-                        }
-                        if (users) {
-                            return reply(Boom.conflict('Email already in use.'));
-                        }
-                        reply(true);
-                    });
-                }
-            }],
+            pre: [internals.preware.checkEmail],
             tags: ['api', 'signup'],
             description: 'Sign up as vendor'
 
@@ -55,14 +59,6 @@ internals.applyRoutes = function(server, next) {
                     let _user = new User();
                     _user.create(request.payload, done);
                 },
-
-                account: ['user', (results, done) => {
-                    let _account = new Account();
-                    let accountDoc = {
-                        'owner': results.user._id.toString()
-                    };
-                    _account.create(accountDoc, done);
-                }],
 
                 welcome: ['user', (results, done) => {
                     const emailOptions = {
@@ -137,6 +133,24 @@ internals.applyRoutes = function(server, next) {
 
     });
 
+
+    server.route({
+        method: 'POST',
+        path: '/checkemail',
+        config: {
+            validate: {
+                payload: {
+                    email: Joi.string().email().lowercase().required()
+                }
+            },
+            pre: [internals.preware.checkEmail],
+            tags: ['api', 'checkemail'],
+            description: 'check duplicate email registration',
+        },
+        handler: (request, reply) => {
+            return reply(new Response());
+        }
+    });
 
     next();
 };

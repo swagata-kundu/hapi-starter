@@ -23,7 +23,11 @@ const goodOptions = {
 const manifest = {
     connections: [{
         port: Config.get('/port/api'),
-        labels: Config.get('/labels/api')
+        labels: Config.get('/labels/api'),
+        routes: {
+            cors: true
+        }
+
     }],
     registrations: [{ plugin: 'hapi-auth-basic' },
         { plugin: 'vision' },
@@ -65,12 +69,12 @@ const manifest = {
                 routes: { prefix: '/api' }
             }
         },
-        {
-            plugin: './server/api/user',
-            options: {
-                routes: { prefix: '/api/user' }
-            }
-        },
+        // {
+        //     plugin: './server/api/user',
+        //     options: {
+        //         routes: { prefix: '/api/user' }
+        //     }
+        // },
         {
             plugin: './server/api/upload',
             options: {
