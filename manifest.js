@@ -69,12 +69,6 @@ const manifest = {
                 routes: { prefix: '/api' }
             }
         },
-        // {
-        //     plugin: './server/api/user',
-        //     options: {
-        //         routes: { prefix: '/api/user' }
-        //     }
-        // },
         {
             plugin: './server/api/upload',
             options: {
