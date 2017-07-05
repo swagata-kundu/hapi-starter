@@ -25,7 +25,8 @@ internals.applyRoutes = function(server, next) {
         config: {
             validate: {
                 payload: {
-                    name: Joi.string().required()
+                    name: Joi.string().required(),
+                    imgUrl: Joi.string().uri().required(),
                 }
             },
             auth: {

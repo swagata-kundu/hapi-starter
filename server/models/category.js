@@ -20,6 +20,7 @@ const options = {
 
 const categorySchema = new Mongoose.Schema({
     name: { type: String, required: true },
+    imgUrl: { type: String, required: true },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false }
 }, options);
