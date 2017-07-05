@@ -25,7 +25,7 @@ internals.applyRoutes = function(server, next) {
                 payload: {
                     title: Joi.string().required(),
                     imgUrl: Joi.string().uri().required(),
-                    category: Joi.objectId().required()
+                    category: Joi.objectId().required().description('Must be a mongoose object id')
                 }
             },
             auth: {
@@ -75,6 +75,7 @@ internals.applyRoutes = function(server, next) {
             _post.findOneAndPopulate({ _id: postId }, [
                 { path: 'creator', select: 'firstName lastName email' },
                 { path: 'category', select: 'name' },
+                { path: 'comments.commentBy', select: 'firstName' }
 
             ]).then((doc) => {
                 if (!doc) {
@@ -139,6 +140,52 @@ internals.applyRoutes = function(server, next) {
         }
     });
 
+
+    server.route({
+        method: 'POST',
+        path: '/comment',
+        config: {
+            validate: {
+                payload: {
+                    comment: Joi.string().required(),
+                    postId: Joi.objectId().required().description('Must be a mongoose object id')
+                }
+            },
+            auth: {
+                strategy: 'simple',
+                scope: ['vendor', 'admin']
+            },
+            tags: ['api', 'post'],
+            description: 'Submit comment'
+        },
+        handler: (request, reply) => {
+            const userId = request.auth.credentials._id.toString();
+            var postId = request.payload.postId;
+
+            let _post = new Post();
+
+            let comment = {
+                comment: request.payload.comment,
+                commentBy: userId,
+                reply: ''
+            };
+
+            _post.updateOne(postId, {
+                $push: { comments: comment }
+            }, {}, (err) => {
+
+                if (err) {
+                    return reply(err);
+                }
+
+                return reply(new Response(Message.SUCCESS));
+
+            });
+
+        }
+
+
+    });
 
     next();
 
