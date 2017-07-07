@@ -25,7 +25,9 @@ internals.applyRoutes = function(server, next) {
             },
             validate: {
                 payload: {
-                    file: Joi.any().meta({ swaggerType: 'file' }).description('file').required()
+                    file: Joi.any().meta({
+                        swaggerType: 'file'
+                    }).description('file').required()
                 }
             },
             plugins: {
@@ -54,8 +56,9 @@ internals.applyRoutes = function(server, next) {
                         if (err) {
                             return reply(Boom.badImplementation());
                         }
+                        const host = request.info.host;
                         const result = {
-                            url: '/uploads/' + fileName
+                            url: 'http://' + host + '/uploads/' + fileName
                         };
                         return reply(new Response(Message.SUCCESS, result));
                     });

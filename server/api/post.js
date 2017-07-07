@@ -129,7 +129,7 @@ internals.applyRoutes = function(server, next) {
 
                     }]
                 },
-                projection: { comments: 0 }
+                projection: {}
             };
 
 
